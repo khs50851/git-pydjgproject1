@@ -53,6 +53,7 @@ def login(request):
         print("form.is_valid : ", form.is_valid())
         if form.is_valid():  # 정상적인지 검사
             # 세션코드
+
             request.session['user'] = form.user_id
             # is_valid에서 유효성 검사를 하고 유효하지 않다고 판단하면
             # 폼 안에 에러정보가 들어있게 되고 login.html로 넘어감
