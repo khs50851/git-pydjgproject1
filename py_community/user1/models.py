@@ -4,6 +4,7 @@ from django.db import models
 
 
 class User1(models.Model):
+    objects = models.Manager()
     username = models.CharField(max_length=32,
                                 verbose_name='사용자명')
     useremail = models.EmailField(max_length=128,  # 이메일필드는 char필드랑 비슷한데 이메일 형식으로 받게함
