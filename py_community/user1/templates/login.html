@@ -1,50 +1,51 @@
-<html>
-    <head>
-         <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% extends "base.html" %}
 
-        <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> -->
-        <link rel="stylesheet" href="/static/bootstrap.min.css"/>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    </head>
-    <body>
-        <div class="container">
-            <div class="row mt-5">
-                <div class="col-12 text-center">
-                    <h1>로그인</h1>
-                </div>
-            </div>
-            <div class="row mt-5">
-                <div class="col-12">
-                  {{error}} <!-- view를 렌더링 할때 res_data에 있는 key(error)와 매핑이 됨 -->
-                </div>
-            </div>
-
-            <div class="row mt-5">
-                <div class="col-12">
-                    <form method="post" action=".">
-                        <!--action에 .만 찍으면 이렇게 하면 포스트 방식으로 register가 실행 -->
-                        {% csrf_token %} <!-- 이거 꼭 추가해야함  -->
-
-                        <!-- 폼의 경우에는 데이터를 서버에 전달, 우리 사이트에서 데이터를 전달해주는거면 문제가 없는데 다른 사람들이 다른 사이트에서 전송을 하는경우를 방지하기 위함 -->
-                        <!-- 암호화된 키를 숨겨놓음 이 키가 없으면 잘못된 요청이라고 거절함 저렇게 입력하면 장고가 알아서 폼에 필요한 해쉬정보를 넣어놓음 -->
-                        <!-- 안쓰면 토큰이 없다고 에러남 -->
-                        <div class="form-group">
-                          <label for="username">사용자 이름</label>
-                          <input type="text" class="form-control" id="username" placeholder="ID 입력" name="username">
-                        </div>
-
-                        <div class="form-group">
-                          <label for="password">비밀번호</label>
-                          <input type="password" class="form-control" id="password" placeholder="Password" name="password">
-                        </div>
-                        <button type="submit" class="btn btn-primary">로그인</button>
-                      </form>
-                </div>
+        {% block contents %}
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <h1>로그인</h1>
             </div>
         </div>
-    </body>
-</html>
+        <div class="row mt-5">
+            <div class="col-12">
+                {{error}} <!-- view를 렌더링 할때 res_data에 있는 key(error)와 매핑이 됨 -->
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <form method="post" action=".">
+                    <!--action에 .만 찍으면 이렇게 하면 포스트 방식으로 register가 실행 -->
+                    {% csrf_token %} <!-- 이거 꼭 추가해야함  -->
+
+                    <!-- 폼의 경우에는 데이터를 서버에 전달, 우리 사이트에서 데이터를 전달해주는거면 문제가 없는데 다른 사람들이 다른 사이트에서 전송을 하는경우를 방지하기 위함 -->
+                    <!-- 암호화된 키를 숨겨놓음 이 키가 없으면 잘못된 요청이라고 거절함 저렇게 입력하면 장고가 알아서 폼에 필요한 해쉬정보를 넣어놓음 -->
+                    <!-- 안쓰면 토큰이 없다고 에러남 -->
+                    <!-- <div class="form-group">
+                        <label for="username">사용자 이름</label>
+                        <input type="text" class="form-control" id="username" placeholder="ID 입력" name="username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">비밀번호</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                    </div> -->
+
+                    <!-- {{ form.as_table }}--> <!-- 폼은 여러가지 태그로 출력 가능 -->
+                    <!-- form.as_p 이건 폼태그를 p태그로 감싸서 출력 -->
+                    {% for field in form %} <!-- form을 반복문에 넣음 그럼 각 필드별로 나옴 -->
+                   
+                    <div class="form-group">
+                        <label for="{{field.id_for_label}}">{{field.label}}</label>
+                        <input type="{{field.field.widget.input_type}}" class="form-control" id="{{field.id_for_label}}" placeholder="{{field.label}}" name="{{field.name}}"/>
+                    </div>
+                    {% if field.errors %} <!-- 필드 안에 errors라는 변수가 있는데 이게 만약에 있으면 -->
+                    <span style="color:red">{{ field.errors }}</span>
+                    {% endif %}
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary">로그인</button>
+                    </form>
+            </div>
+        </div>
+    </div>
+    {% endblock %}
