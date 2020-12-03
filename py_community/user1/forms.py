@@ -19,7 +19,13 @@ class LoginForm(forms.Form):
         password = cleaned_data.get('password')
 
         if username and password:
-            user1 = User1.objects.get(username=username)
+            try:
+                user1 = User1.objects.get(username=username)
+            except User1.DoesNotExist:
+                # 없는 아이디로 로그인할 경우 doesnotexist 에러가 발생하는데 이걸
+                # try except로 에러처리
+                self.add_error('username', '아이디가 없습니다.')
+                return
             if not check_password(password, user1.password):
                 # 원하는 필드에 원하는 에러메세지 추가  password 필드에 에러 추가
                 self.add_error('password', '비밀번호가 틀렸습니다.')
