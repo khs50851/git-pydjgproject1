@@ -10,9 +10,8 @@ def home(request):
 
     if user_id:
         user1 = User1.objects.get(pk=user_id)
-        return HttpResponse(user1.username+"님 환영합니다")
-    else:
-        return HttpResponse('Home!')
+
+    return render(request, 'home.html')
 
 
 def logout(request):

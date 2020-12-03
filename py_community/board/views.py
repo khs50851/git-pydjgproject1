@@ -3,7 +3,9 @@ from django.core.paginator import Paginator
 from .models import Board
 from .forms import BoardForm
 from user1.models import User1
+from tag.models import Tag
 from django.http import Http404
+
 # Create your views here.
 
 
@@ -23,15 +25,31 @@ def board_write(request):
     if request.method == 'POST':
         form = BoardForm(request.POST)
         if form.is_valid():
+
             user_id = request.session.get('user')
             user1 = User1.objects.get(pk=user_id)
 
-            print("user1 : ", user1)
+            tags = form.cleaned_data['tags'].split(',')
             board = Board()
             board.title = form.cleaned_data['title']
             board.contents = form.cleaned_data['contents']
             board.writer = user1
             board.save()
+
+            # 태그는 보드가 먼저 만들어지고 만들어져야함 그래서 위에 전부 입력되고 save까지되면 id를 자동으로 생성하는데
+            # 그 id 값이 생성이 된 뒤에 추가를 할 수 있음
+
+            for tag in tags:
+                if not tag:
+                    continue
+
+                # name=tag에서 tag의 이름이 있으면 그걸로 사용 없으면 새로 만듬 기본값도 넣을 수 있음 default로
+                _tag, _ = Tag.objects.get_or_create(name=tag)
+                # _tag, created = Tag.objects.get_or_create(name=tag) 값을 두개를 반환하는데 하나는 _tag에다가 생성된 객체 저장, 하나는(created) 새로 생성된앤지 아닌지 이 여부를 가져다줌 boolean값 리턴
+                # 위처럼 created를 사용하지 않을경우엔 언더바 _ 로 쓰면 됨
+                board.tags.add(_tag)
+
+            print("user1 : ", user1)
 
             return redirect('/board/list/')
     else:
